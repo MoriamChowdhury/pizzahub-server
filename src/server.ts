@@ -1,3 +1,4 @@
+import { connectDB } from "./config/db";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -19,6 +20,13 @@ app.get("/", (_req, res) => {
   res.send("PizzaHub server is running 🍕");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB", err);
+    process.exit(1);
+  });
