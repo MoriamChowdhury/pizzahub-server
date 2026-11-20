@@ -6,7 +6,7 @@ import userRoutes from "./routes/userRoutes";
 import menuRoutes from "./routes/menuRoutes";
 import { notFound, errorHandler } from "./middleware/errorHandler";
 import orderRoutes from "./routes/orderRoutes";
-
+import statsRoutes from "./routes/statsRoutes";
 dotenv.config();
 
 const app = express();
@@ -27,6 +27,7 @@ app.get("/", (_req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/stats", statsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
