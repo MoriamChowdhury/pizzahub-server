@@ -1,53 +1,27 @@
 import { Router } from "express";
-import { getDB } from "../config/db";
+import { verifyJWT } from "../middleware/verifyJWT";
+import { verifyRole } from "../middleware/verifyRole";
+import { catchAsync } from "../utils/helpers";
+import {
+  getFeatured, getLocations, getMenuItems, getMenuItem, getMyItems,
+  createMenuItem, updateMenuItem, toggleAvailability, deleteMenuItem,
+} from "../controllers/menuController";
 
 const router = Router();
 
-// Public: approved item, premium vendor er item age
-router.get("/featured", async (_req, res, next) => {
-  try {
-    const items = await getDB()
-      .collection("menuItems")
-      .aggregate([
-        { $match: { status: "approved" } },
-        {
-          $lookup: {
-            from: "user",
-            localField: "vendorId",
-            foreignField: "_id",
-            as: "vendor",
-          },
-        },
-        { $unwind: "$vendor" },
-        { $match: { "vendor.isBlocked": { $ne: true } } },
-        {
-          $addFields: {
-            isPremium: {
-              $cond: [{ $eq: ["$vendor.subscriptionPlan", "premium"] }, 1, 0],
-            },
-          },
-        },
-        { $sort: { isPremium: -1, createdAt: -1 } },
-        { $limit: 6 },
-        {
-          $project: {
-            itemName: 1,
-            category: 1,
-            price: 1,
-            location: 1,
-            images: 1,
-            "vendor.name": 1,
-            "vendor.businessName": 1,
-            "vendor.subscriptionPlan": 1,
-          },
-        },
-      ])
-      .toArray();
+// Public (specific route gulo /:id er age thakte hobe)
+router.get("/featured", catchAsync(getFeatured));
+router.get("/locations", catchAsync(getLocations));
+router.get("/", catchAsync(getMenuItems));
 
-    res.json({ items });
-  } catch (err) {
-    next(err);
-  }
-});
+// Vendor
+router.get("/vendor/mine", verifyJWT, verifyRole("vendor"), catchAsync(getMyItems));
+router.post("/", verifyJWT, verifyRole("vendor"), catchAsync(createMenuItem));
+router.patch("/:id/availability", verifyJWT, verifyRole("vendor"), catchAsync(toggleAvailability));
+router.patch("/:id", verifyJWT, verifyRole("vendor"), catchAsync(updateMenuItem));
+router.delete("/:id", verifyJWT, verifyRole("vendor", "admin"), catchAsync(deleteMenuItem));
+
+// Private: logged-in jekono user
+router.get("/:id", verifyJWT, catchAsync(getMenuItem));
 
 export default router;
