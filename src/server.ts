@@ -5,6 +5,7 @@ import { connectDB } from "./config/db";
 import userRoutes from "./routes/userRoutes";
 import menuRoutes from "./routes/menuRoutes";
 import { notFound, errorHandler } from "./middleware/errorHandler";
+import orderRoutes from "./routes/orderRoutes";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.get("/", (_req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/menu", menuRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
