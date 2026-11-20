@@ -1,8 +1,9 @@
-import { connectDB } from "./config/db";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { connectDB } from "./config/db";
 import userRoutes from "./routes/userRoutes";
+import menuRoutes from "./routes/menuRoutes";
 import { notFound, errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
@@ -22,6 +23,12 @@ app.get("/", (_req, res) => {
   res.send("PizzaHub server is running 🍕");
 });
 
+app.use("/api/users", userRoutes);
+app.use("/api/menu", menuRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
+
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
@@ -32,8 +39,3 @@ connectDB()
     console.error("Failed to connect to MongoDB", err);
     process.exit(1);
   });
-
-  app.use("/api/users", userRoutes);
-
-app.use(notFound);
-app.use(errorHandler);
