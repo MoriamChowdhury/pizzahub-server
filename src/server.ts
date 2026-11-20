@@ -2,6 +2,8 @@ import { connectDB } from "./config/db";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import userRoutes from "./routes/userRoutes";
+import { notFound, errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
 
@@ -30,3 +32,8 @@ connectDB()
     console.error("Failed to connect to MongoDB", err);
     process.exit(1);
   });
+
+  app.use("/api/users", userRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
