@@ -9,7 +9,8 @@ import orderRoutes from "./routes/orderRoutes";
 import statsRoutes from "./routes/statsRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import profileRoutes from "./routes/profileRoutes";
-
+import { stripeWebhook } from "./controllers/paymentController";
+import paymentRoutes from "./routes/paymentRoutes";
 dotenv.config();
 
 const app = express();
@@ -21,6 +22,14 @@ app.use(
     credentials: true,
   })
 );
+
+
+app.post(
+  "/api/webhooks/stripe",
+  express.raw({ type: "application/json" }),
+  stripeWebhook
+);
+
 app.use(express.json());
 
 app.get("/", (_req, res) => {
@@ -33,7 +42,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/profile", profileRoutes);
-
+app.use("/api/payments", paymentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
