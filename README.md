@@ -3,7 +3,7 @@
 Express + TypeScript REST API for **PizzaHub**, a pizza ordering and delivery platform.
 
 - **Live Client Site:** https://pizzahub-client-theta.vercel.app
-- **Live API:** `https://pizzahub-server-two.vercel.app/`
+- **Live API:** https://pizzahub-server-two.vercel.app/
 - **Client Repo:** https://github.com/MoriamChowdhury/pizzahub-client
 - **Server Repo:** https://github.com/MoriamChowdhury/pizzahub-server
 
